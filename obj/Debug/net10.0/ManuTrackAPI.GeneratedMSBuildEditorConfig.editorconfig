@@ -25,3 +25,27 @@ build_property.EnableCodeStyleSeverity =
 [C:/Users/2487316/OneDrive - Cognizant/Desktop/ManuTrack-Razor/ManuTrackLocal/ManuTrackAPI/Pages/Auth/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXV0aFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2487316/OneDrive - Cognizant/Desktop/ManuTrack-Razor/ManuTrackLocal/ManuTrackAPI/Pages/Auth/Logout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXV0aFxMb2dvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2487316/OneDrive - Cognizant/Desktop/ManuTrack-Razor/ManuTrackLocal/ManuTrackAPI/Pages/Dashboard/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGFzaGJvYXJkXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2487316/OneDrive - Cognizant/Desktop/ManuTrack-Razor/ManuTrackLocal/ManuTrackAPI/Pages/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2487316/OneDrive - Cognizant/Desktop/ManuTrack-Razor/ManuTrackLocal/ManuTrackAPI/Pages/Users/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXNlcnNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2487316/OneDrive - Cognizant/Desktop/ManuTrack-Razor/ManuTrackLocal/ManuTrackAPI/Pages/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2487316/OneDrive - Cognizant/Desktop/ManuTrack-Razor/ManuTrackLocal/ManuTrackAPI/Pages/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 

@@ -7,6 +7,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Database
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration
@@ -14,6 +25,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Services
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<WorkOrderService>();
 
 // JWT
 var jwtKey = builder.Configuration["Jwt:Key"]!;
@@ -33,15 +46,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+// Session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromHours(8);
+    options.Cookie.HttpOnly = true;
+});
+
+// Razor Pages + Controllers
+builder.Services.AddRazorPages();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
-builder.Services.AddScoped<ProductService>(); // ← add
-builder.Services.AddScoped<WorkOrderService>(); // ← add
-
 
 var app = builder.Build();
 
+app.UseCors("AllowAngular");
+app.UseStaticFiles();
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapRazorPages();
 app.Run();

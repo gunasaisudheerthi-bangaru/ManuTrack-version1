@@ -328,3 +328,6 @@ C:\Users\2487316\OneDrive - Cognizant\Desktop\ManuTrack-Razor\ManuTrackLocal\Man
 C:\Users\2487316\OneDrive - Cognizant\Desktop\ManuTrack-Razor\ManuTrackLocal\ManuTrackAPI\obj\Debug\net10.0\ManuTrackAPI.pdb
 C:\Users\2487316\OneDrive - Cognizant\Desktop\ManuTrack-Razor\ManuTrackLocal\ManuTrackAPI\obj\Debug\net10.0\ManuTrackAPI.genruntimeconfig.cache
 C:\Users\2487316\OneDrive - Cognizant\Desktop\ManuTrack-Razor\ManuTrackLocal\ManuTrackAPI\obj\Debug\net10.0\ref\ManuTrackAPI.dll
+C:\Users\2487316\OneDrive - Cognizant\Desktop\ManuTrack-Razor\ManuTrackLocal\ManuTrackAPI\obj\Debug\net10.0\ManuTrackAPI.RazorAssemblyInfo.cache
+C:\Users\2487316\OneDrive - Cognizant\Desktop\ManuTrack-Razor\ManuTrackLocal\ManuTrackAPI\obj\Debug\net10.0\ManuTrackAPI.RazorAssemblyInfo.cs
+C:\Users\2487316\OneDrive - Cognizant\Desktop\ManuTrack-Razor\ManuTrackLocal\ManuTrackAPI\bin\Debug\net10.0\ManuTrackAPI.staticwebassets.runtime.json

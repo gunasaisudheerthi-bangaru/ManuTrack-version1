@@ -1,0 +1,62 @@
+@page
+@model ManuTrackAPI.Pages.Dashboard.IndexModel
+
+<h4 class="fw-bold mb-4">Dashboard</h4>
+
+<div class="row g-4">
+
+    @if (Model.Role == "Admin")
+    {
+        <div class="col-md-4">
+            <a href="/Users/Index" class="text-decoration-none">
+                <div class="card shadow-sm border-start border-primary border-4">
+                    <div class="card-body">
+                        <h5 class="fw-bold">Users</h5>
+                        <p class="text-muted small mb-0">
+                            Manage system users and roles
+                        </p>
+                        <p class="text-primary mt-2 mb-0 small fw-bold">
+                            Manage →
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+
+    @if (Model.Role == "Admin" || Model.Role == "Planner")
+    {
+        <div class="col-md-4">
+            <a href="/Products/Index" class="text-decoration-none">
+                <div class="card shadow-sm border-start border-success border-4">
+                    <div class="card-body">
+                        <h5 class="fw-bold">Products & BOM</h5>
+                        <p class="text-muted small mb-0">
+                            Manage products and bill of materials
+                        </p>
+                        <p class="text-success mt-2 mb-0 small fw-bold">
+                            Manage →
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+
+    <div class="col-md-4">
+        <a href="/WorkOrders/Index" class="text-decoration-none">
+            <div class="card shadow-sm border-start border-warning border-4">
+                <div class="card-body">
+                    <h5 class="fw-bold">Work Orders</h5>
+                    <p class="text-muted small mb-0">
+                        Track production and tasks
+                    </p>
+                    <p class="text-warning mt-2 mb-0 small fw-bold">
+                        Manage →
+                    </p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+</div>
