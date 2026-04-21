@@ -33,6 +33,13 @@ public class IndexModel : PageModel
         return Page();
     }
 
+    // ── GET BOM (for AJAX) ─────────────────────────────────
+    public async Task<IActionResult> OnGetBOMAsync(int productId)
+    {
+        var boms = await _products.GetBOMsByProductAsync(productId);
+        return new JsonResult(boms);
+    }
+
     // ── CREATE PRODUCT ─────────────────────────────────────
     public async Task<IActionResult> OnPostCreateProductAsync(
         string Name, string Category, string Version, string Status)
@@ -125,6 +132,20 @@ public class IndexModel : PageModel
             ErrorMessage = error;
         else
             SuccessMessage = "BOM entry updated successfully!";
+
+        Products = await _products.GetAllProductsAsync();
+        return Page();
+    }
+
+    // ── OBSOLETE BOM ───────────────────────────────────────
+    public async Task<IActionResult> OnPostObsoleteBOMAsync(int bomId)
+    {
+        var (success, error) = await _products.ObsoleteBOMAsync(bomId, GetActorId());
+
+        if (!success)
+            ErrorMessage = error ?? "Could not obsolete BOM.";
+        else
+            SuccessMessage = "BOM entry marked as obsolete.";
 
         Products = await _products.GetAllProductsAsync();
         return Page();

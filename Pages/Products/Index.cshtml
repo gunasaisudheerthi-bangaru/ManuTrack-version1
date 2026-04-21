@@ -20,9 +20,12 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="mb-0">Products</h5>
-    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createProductModal">
-        + Add Product
-    </button>
+    @if (Model.Role == "Admin" || Model.Role == "Planner")
+    {
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createProductModal">
+            + Add Product
+        </button>
+    }
 </div>
 
 <div class="card shadow-sm mb-5">
@@ -54,11 +57,7 @@
                         <td class="text-muted small">#@p.ProductID</td>
                         <td class="fw-semibold">@p.Name</td>
                         <td>@p.Category</td>
-<<<<<<< HEAD
                         <td><span class="badge bg-secondary">v@(p.Version)</span></td>
-=======
-                        <td><span class="badge bg-secondary">v@p.Version</span></td>
->>>>>>> 6855243d167b229da16e9200e2b445e555565ef4
                         <td>
                             @if (p.Status == "Active")
                             {
@@ -75,14 +74,20 @@
                         </td>
                         <td class="text-muted small">@p.CreatedAt.ToString("dd MMM yyyy")</td>
                         <td>
-                            <button class="btn btn-outline-secondary btn-sm me-1"
-                                    onclick="openEditProduct(@p.ProductID, '@p.Name', '@p.Category', '@p.Version', '@p.Status')">
-                                Edit
-                            </button>
-                            <button class="btn btn-outline-success btn-sm me-1"
-                                    onclick="openBOM(@p.ProductID, '@p.Name')">
-                                BOM
-                            </button>
+                            @if (Model.Role == "Admin" || Model.Role == "Planner")
+                            {
+                                <button class="btn btn-outline-secondary btn-sm me-1"
+                                        onclick="openEditProduct(@p.ProductID, '@p.Name', '@p.Category', '@p.Version', '@p.Status')">
+                                    Edit
+                                </button>
+                            }
+                            @if (Model.Role == "Planner")
+                            {
+                                <button class="btn btn-outline-success btn-sm me-1"
+                                        onclick="openBOM(@p.ProductID, '@p.Name')">
+                                    BOM
+                                </button>
+                            }
                             @if (Model.Role == "Admin")
                             {
                                 <form method="post" asp-page-handler="DeleteProduct"
@@ -330,14 +335,11 @@
     }
 
     async function loadBOM(productId) {
-        const token = '@HttpContext.Session.GetString("token")';
         const tbody = document.getElementById('bomTableBody');
         tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-3">Loading...</td></tr>';
 
         try {
-            const res = await fetch(`/api/v1/products/${productId}/bom`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const res = await fetch(`/Products?handler=BOM&productId=${productId}`);
             const data = await res.json();
 
             if (!data || data.length === 0) {
@@ -377,11 +379,18 @@
 
     async function obsoleteBOM(bomId) {
         if (!confirm('Mark this BOM entry as obsolete?')) return;
-        const token = '@HttpContext.Session.GetString("token")';
-        const res = await fetch(`/api/v1/products/bom/${bomId}/obsolete`, {
-            method: 'PATCH',
-            headers: { 'Authorization': `Bearer ${token}` }
+
+        const formData = new FormData();
+        formData.append('bomId', bomId);
+
+        const token = document.querySelector('input[name="__RequestVerificationToken"]');
+        if (token) formData.append('__RequestVerificationToken', token.value);
+
+        const res = await fetch(`/Products?handler=ObsoleteBOM`, {
+            method: 'POST',
+            body: formData
         });
+
         if (res.ok) {
             loadBOM(currentProductId);
         } else {

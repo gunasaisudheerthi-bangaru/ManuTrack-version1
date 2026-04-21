@@ -3,7 +3,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="fw-bold mb-0">Work Orders</h4>
-    @if (Model.Role == "Admin" || Model.Role == "Planner")
+    @if (Model.Role == "Planner")
     {
         <button class="btn btn-primary btn-sm"
                 onclick="document.getElementById('createForm').classList.toggle('d-none')">
@@ -29,7 +29,7 @@
 }
 
 <!-- Create Work Order Form -->
-@if (Model.Role == "Admin" || Model.Role == "Planner")
+@if (Model.Role == "Planner")
 {
     <div id="createForm" class="card shadow-sm mb-4 d-none">
         <div class="card-body">
@@ -146,7 +146,8 @@
                     </div>
 
                     <!-- Status Action Buttons -->
-                    @if (Model.Role == "Admin" || Model.Role == "Planner")
+                   <!-- Status Action Buttons — Planner only -->
+                    @if (Model.Role == "Planner")
                     {
                         <div class="mt-3 d-flex gap-2 flex-wrap">
                             @if (Model.SelectedWO.Status == "Pending")
@@ -169,7 +170,7 @@
                                     <input type="hidden" name="status"
                                            value="Completed" />
                                     <button type="submit" class="btn btn-success btn-sm">
-                                        Complete
+                                        Mark as Done
                                     </button>
                                 </form>
                             }
@@ -194,7 +195,7 @@
             <!-- Tasks -->
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="fw-bold mb-0">Tasks</h5>
-                @if ((Model.Role == "Admin" || Model.Role == "Planner") &&
+                @if (Model.Role == "Planner" &&
                      Model.SelectedWO.Status != "Completed" &&
                      Model.SelectedWO.Status != "Cancelled")
                 {
@@ -249,7 +250,13 @@
             <!-- Tasks List -->
             <div class="card shadow-sm">
                 <div class="card-body p-0">
-                    @if (!Model.Tasks.Any())
+                    @if (Model.SelectedWO.Status == "Cancelled")
+                    {
+                        <div class="p-4 text-center text-muted">
+                            This work order has been cancelled.
+                        </div>
+                    }
+                    else if (!Model.Tasks.Any())
                     {
                         <div class="p-4 text-center text-muted">
                             No tasks yet.
@@ -272,37 +279,40 @@
                                             @task.Status
                                         </span>
 
-                                        @if (task.Status == "Pending")
+                                        @if (Model.Role == "Operator" && task.AssignedTo == Model.CurrentUserId)
                                         {
-                                            <form method="post"
-                                                  asp-page-handler="UpdateTaskStatus">
-                                                <input type="hidden" name="taskId"
-                                                       value="@task.TaskID" />
-                                                <input type="hidden" name="woId"
-                                                       value="@Model.SelectedWO.WorkOrderID" />
-                                                <input type="hidden" name="status"
-                                                       value="InProgress" />
-                                                <button type="submit"
-                                                        class="btn btn-primary btn-sm">
-                                                    Start
-                                                </button>
-                                            </form>
-                                        }
-                                        @if (task.Status == "InProgress")
-                                        {
-                                            <form method="post"
-                                                  asp-page-handler="UpdateTaskStatus">
-                                                <input type="hidden" name="taskId"
-                                                       value="@task.TaskID" />
-                                                <input type="hidden" name="woId"
-                                                       value="@Model.SelectedWO.WorkOrderID" />
-                                                <input type="hidden" name="status"
-                                                       value="Done" />
-                                                <button type="submit"
-                                                        class="btn btn-success btn-sm">
-                                                    Done
-                                                </button>
-                                            </form>
+                                            @if (task.Status == "Pending")
+                                            {
+                                                <form method="post"
+                                                      asp-page-handler="UpdateTaskStatus">
+                                                    <input type="hidden" name="taskId"
+                                                           value="@task.TaskID" />
+                                                    <input type="hidden" name="woId"
+                                                           value="@Model.SelectedWO.WorkOrderID" />
+                                                    <input type="hidden" name="status"
+                                                           value="InProgress" />
+                                                    <button type="submit"
+                                                            class="btn btn-primary btn-sm">
+                                                        Start
+                                                    </button>
+                                                </form>
+                                            }
+                                            @if (task.Status == "InProgress")
+                                            {
+                                                <form method="post"
+                                                      asp-page-handler="UpdateTaskStatus">
+                                                    <input type="hidden" name="taskId"
+                                                           value="@task.TaskID" />
+                                                    <input type="hidden" name="woId"
+                                                           value="@Model.SelectedWO.WorkOrderID" />
+                                                    <input type="hidden" name="status"
+                                                           value="Done" />
+                                                    <button type="submit"
+                                                            class="btn btn-success btn-sm">
+                                                        Done
+                                                    </button>
+                                                </form>
+                                            }
                                         }
                                     </div>
                                 </div>
@@ -325,7 +335,7 @@
 </div>
 
 @functions {
-    string GetStatusBadge(string status) => status switch
+    string GetStatusBadge(string status) => status switch   
     {
         "Pending" => "bg-warning text-dark",
         "InProgress" => "bg-primary",

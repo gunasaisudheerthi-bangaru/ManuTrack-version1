@@ -20,6 +20,7 @@ public class IndexModel : PageModel
     }
 
     public string Role { get; set; } = string.Empty;
+    public int CurrentUserId { get; set; }
     public string SuccessMessage { get; set; } = string.Empty;
     public string ErrorMessage { get; set; } = string.Empty;
 
@@ -35,6 +36,7 @@ public class IndexModel : PageModel
             return RedirectToPage("/Auth/Login");
 
         Role = HttpContext.Session.GetString("role") ?? "";
+        CurrentUserId = GetActorId();
 
         await LoadDataAsync();
 
@@ -56,6 +58,13 @@ public class IndexModel : PageModel
     {
         Role = HttpContext.Session.GetString("role") ?? "";
 
+        if (Role != "Planner")
+        {
+            ErrorMessage = "Only Planners can create work orders.";
+            await LoadDataAsync();
+            return Page();
+        }
+
         var (wo, error) = await _workOrders.CreateAsync(
             new CreateWorkOrderRequest(ProductID, Quantity, StartDate, EndDate),
             GetActorId());
@@ -74,6 +83,16 @@ public class IndexModel : PageModel
     {
         Role = HttpContext.Session.GetString("role") ?? "";
 
+        if (Role != "Planner")
+        {
+            ErrorMessage = "Only Planners can update work order status.";
+            await LoadDataAsync();
+            SelectedWO = WorkOrders.FirstOrDefault(w => w.WorkOrderID == woId);
+            if (SelectedWO != null)
+                Tasks = await _workOrders.GetTasksByWorkOrderAsync(woId);
+            return Page();
+        }
+
         var (wo, error) = await _workOrders.UpdateStatusAsync(
             woId, status, GetActorId());
 
@@ -87,12 +106,19 @@ public class IndexModel : PageModel
         }
 
         await LoadDataAsync();
-        return Page();
+        return RedirectToPage(new { woId });
     }
 
     public async Task<IActionResult> OnPostCancelAsync(int woId)
     {
         Role = HttpContext.Session.GetString("role") ?? "";
+
+        if (Role != "Planner")
+        {
+            ErrorMessage = "Only Planners can cancel work orders.";
+            await LoadDataAsync();
+            return Page();
+        }
 
         var (success, error) = await _workOrders.CancelAsync(
             woId, GetActorId());
@@ -102,14 +128,20 @@ public class IndexModel : PageModel
         else
             SuccessMessage = "Work order cancelled.";
 
-        await LoadDataAsync();
-        return Page();
+        return RedirectToPage(new { woId });
     }
 
     public async Task<IActionResult> OnPostAddTaskAsync(
         int woId, string Description, int AssignedTo)
     {
         Role = HttpContext.Session.GetString("role") ?? "";
+
+        if (Role != "Planner")
+        {
+            ErrorMessage = "Only Planners can add tasks.";
+            await LoadDataAsync();
+            return Page();
+        }
 
         var (task, error) = await _workOrders.CreateTaskAsync(
             woId,
@@ -121,38 +153,54 @@ public class IndexModel : PageModel
         else
             SuccessMessage = "Task added successfully!";
 
-        await LoadDataAsync();
-        SelectedWO = WorkOrders.FirstOrDefault(w => w.WorkOrderID == woId);
-        if (SelectedWO != null)
-            Tasks = await _workOrders.GetTasksByWorkOrderAsync(woId);
-
-        return Page();
+        return RedirectToPage(new { woId });
     }
 
     public async Task<IActionResult> OnPostUpdateTaskStatusAsync(
         int taskId, int woId, string status)
     {
         Role = HttpContext.Session.GetString("role") ?? "";
+        var actorId = GetActorId();
 
-        var (task, error) = await _workOrders.UpdateTaskStatusAsync(
-            taskId, status, GetActorId());
+        if (Role != "Operator")
+        {
+            ErrorMessage = "Only Operators can update task status.";
+            await LoadDataAsync();
+            SelectedWO = WorkOrders.FirstOrDefault(w => w.WorkOrderID == woId);
+            if (SelectedWO != null)
+                Tasks = await _workOrders.GetTasksByWorkOrderAsync(woId);
+            return Page();
+        }
+
+        // Operator can only update tasks assigned to them
+        var allTasks = await _workOrders.GetTasksByWorkOrderAsync(woId);
+        var task = allTasks.FirstOrDefault(t => t.TaskID == taskId);
+
+        if (task == null || task.AssignedTo != actorId)
+        {
+            ErrorMessage = "You can only update tasks assigned to you.";
+            await LoadDataAsync();
+            SelectedWO = WorkOrders.FirstOrDefault(w => w.WorkOrderID == woId);
+            Tasks = allTasks;
+            return RedirectToPage(new { woId });
+        }
+
+        var (updatedTask, error) = await _workOrders.UpdateTaskStatusAsync(
+            taskId, status, actorId);
 
         if (error != null)
             ErrorMessage = error;
         else
             SuccessMessage = $"Task marked as {status}";
 
-        await LoadDataAsync();
-        SelectedWO = WorkOrders.FirstOrDefault(w => w.WorkOrderID == woId);
-        if (SelectedWO != null)
-            Tasks = await _workOrders.GetTasksByWorkOrderAsync(woId);
-
-        return Page();
+        return RedirectToPage(new { woId });
     }
 
     private async Task LoadDataAsync()
     {
-        WorkOrders = await _workOrders.GetAllAsync();
+        WorkOrders = (await _workOrders.GetAllAsync())
+                        .OrderByDescending(w => w.WorkOrderID)
+                        .ToList();
         Products = await _products.GetAllProductsAsync();
         Operators = await _auth.GetOperatorsAsync();
     }
