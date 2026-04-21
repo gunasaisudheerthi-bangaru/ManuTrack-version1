@@ -1,6 +1,7 @@
 {
   "format": 1,
   "restore": {
+<<<<<<< HEAD
     "C:\\Users\\2487316\\OneDrive - Cognizant\\Desktop\\ManuTrack-Razor\\ManuTrackLocal\\ManuTrackAPI\\ManuTrackAPI.csproj": {}
   },
   "projects": {
@@ -12,12 +13,25 @@
         "projectPath": "C:\\Users\\2487316\\OneDrive - Cognizant\\Desktop\\ManuTrack-Razor\\ManuTrackLocal\\ManuTrackAPI\\ManuTrackAPI.csproj",
         "packagesPath": "C:\\Users\\2487316\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\2487316\\OneDrive - Cognizant\\Desktop\\ManuTrack-Razor\\ManuTrackLocal\\ManuTrackAPI\\obj\\",
+=======
+    "C:\\Users\\2487429\\OneDrive - Cognizant\\Desktop\\manutrack-razor\\ManuTrack-Razor\\ManuTrackAPI.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\2487429\\OneDrive - Cognizant\\Desktop\\manutrack-razor\\ManuTrack-Razor\\ManuTrackAPI.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\2487429\\OneDrive - Cognizant\\Desktop\\manutrack-razor\\ManuTrack-Razor\\ManuTrackAPI.csproj",
+        "projectName": "ManuTrackAPI",
+        "projectPath": "C:\\Users\\2487429\\OneDrive - Cognizant\\Desktop\\manutrack-razor\\ManuTrack-Razor\\ManuTrackAPI.csproj",
+        "packagesPath": "C:\\Users\\2487429\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\2487429\\OneDrive - Cognizant\\Desktop\\manutrack-razor\\ManuTrack-Razor\\obj\\",
+>>>>>>> 6855243d167b229da16e9200e2b445e555565ef4
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\2487316\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\2487429\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
