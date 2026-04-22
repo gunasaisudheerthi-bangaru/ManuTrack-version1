@@ -143,12 +143,17 @@ public class IndexModel : PageModel
         var (success, error) = await _products.ObsoleteBOMAsync(bomId, GetActorId());
 
         if (!success)
-            ErrorMessage = error ?? "Could not obsolete BOM.";
-        else
-            SuccessMessage = "BOM entry marked as obsolete.";
+            return new JsonResult(new
+            {
+                success = false,
+                message = error ?? "Could not obsolete BOM."
+            });
 
-        Products = await _products.GetAllProductsAsync();
-        return Page();
+        return new JsonResult(new
+        {
+            success = true,
+            message = "BOM marked as obsolete."
+        });
     }
 
     // ── HELPER ─────────────────────────────────────────────
