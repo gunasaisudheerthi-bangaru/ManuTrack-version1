@@ -47,6 +47,13 @@ public class IndexModel : PageModel
     {
         Role = HttpContext.Session.GetString("role") ?? string.Empty;
 
+        if (Role != "Admin")
+        {
+            ErrorMessage = "Only Admin can create products.";
+            Products = await _products.GetAllProductsAsync();
+            return Page();
+        }
+
         var (product, error) = await _products.CreateProductAsync(
             new CreateProductRequest(Name, Category, Version, Status),
             GetActorId());
@@ -65,6 +72,13 @@ public class IndexModel : PageModel
         int ProductID, string Name, string Category, string Version, string Status)
     {
         Role = HttpContext.Session.GetString("role") ?? string.Empty;
+
+        if (Role != "Admin")
+        {
+            ErrorMessage = "Only Admin can update products.";
+            Products = await _products.GetAllProductsAsync();
+            return Page();
+        }
 
         var (product, error) = await _products.UpdateProductAsync(
             ProductID,

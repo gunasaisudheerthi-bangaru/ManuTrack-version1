@@ -10,7 +10,7 @@ public interface IAuthService
     Task<LoginResponse?> LoginAsync(LoginRequest req);
 
     Task<(UserResponse? user, string? error)> CreateUserAsync(
-        CreateUserRequest req, int actorId);
+    CreateUserRequest req, int actorId);
 
     Task<List<UserResponse>> GetAllUsersAsync();
 

@@ -22,7 +22,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="mb-0">Products</h5>
-    @if (Model.Role == "Admin" || Model.Role == "Planner")
+    @if (Model.Role == "Admin")
     {
         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createProductModal">
             + Add Product
@@ -76,7 +76,7 @@
                         </td>
                         <td class="text-muted small">@p.CreatedAt.ToString("dd MMM yyyy")</td>
                         <td>
-                            @if (Model.Role == "Admin" || Model.Role == "Planner")
+                            @if (Model.Role == "Admin" )
                             {
                                 <button class="btn btn-outline-secondary btn-sm me-1"
                                         onclick="openEditProduct(@p.ProductID, '@p.Name', '@p.Category', '@p.Version', '@p.Status')">

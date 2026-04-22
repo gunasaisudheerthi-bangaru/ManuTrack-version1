@@ -33,8 +33,8 @@ public class IndexModel : PageModel
     }
 
     public async Task<IActionResult> OnPostCreateAsync(
-        string Name, string Email, string Phone,
-        string Role, string Password)
+    string Name, string Email, string Phone,
+    string Role, string Password)
     {
         var (user, error) = await _auth.CreateUserAsync(
             new CreateUserRequest(Name, Role, Email, Phone, Password),

@@ -84,7 +84,6 @@ public class AuthService(AppDbContext db, IConfiguration config) : IAuthService
         db.Users.Add(user);
         await db.SaveChangesAsync();
 
-        // Use actorId (Admin's ID) for audit
         await WriteAuditAsync(actorId, "UserCreated", $"NewUserID:{user.UserID} Role:{user.Role}");
         return (MapToResponse(user), null);
     }
