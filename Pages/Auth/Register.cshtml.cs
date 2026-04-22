@@ -1,15 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ManuTrackAPI.Services;
+using ManuTrackAPI.Services.Interfaces;
 using ManuTrackAPI.Models.DTOs;
 
 namespace ManuTrackAPI.Pages.Auth;
 
 public class RegisterModel : PageModel
 {
-    private readonly AuthService _auth;
+    private readonly IAuthService _auth;
 
-    public RegisterModel(AuthService auth)
+    public RegisterModel(IAuthService auth)
     {
         _auth = auth;
     }

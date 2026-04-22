@@ -6,10 +6,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ManuTrackAPI.Services.Interfaces;
 
 namespace ManuTrackAPI.Services;
 
-public class AuthService(AppDbContext db, IConfiguration config)
+public class AuthService(AppDbContext db, IConfiguration config) : IAuthService
 {
     // ── REGISTER (first time, no actor) ───────────────────────
     public async Task<(UserResponse? user, string? error)> RegisterAsync(CreateUserRequest req)

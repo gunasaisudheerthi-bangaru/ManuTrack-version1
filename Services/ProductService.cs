@@ -3,13 +3,13 @@ using ManuTrackAPI.Data;
 using ManuTrackAPI.Models;
 using ManuTrackAPI.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
-
+using ManuTrackAPI.Services.Interfaces;
 using Component = ManuTrackAPI.Models.Component;
 
 
 namespace ManuTrackAPI.Services;
 
-public class ProductService(AppDbContext db, AuthService auth)
+public class ProductService(AppDbContext db, IAuthService auth) : IProductService
 {
     // ── COMPONENT ──────────────────────────────────────────────
 

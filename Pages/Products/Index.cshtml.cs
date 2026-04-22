@@ -2,14 +2,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ManuTrackAPI.Services;
 using ManuTrackAPI.Models.DTOs;
+using ManuTrackAPI.Services.Interfaces;
 
 namespace ManuTrackAPI.Pages.Products;
 
 public class IndexModel : PageModel
 {
-    private readonly ProductService _products;
+    private readonly IProductService _products;
 
-    public IndexModel(ProductService products)
+    public IndexModel(IProductService products)
     {
         _products = products;
     }

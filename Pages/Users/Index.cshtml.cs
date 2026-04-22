@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ManuTrackAPI.Services;
+using ManuTrackAPI.Services.Interfaces;
 using ManuTrackAPI.Models;
 using ManuTrackAPI.Models.DTOs;
 
@@ -8,9 +9,9 @@ namespace ManuTrackAPI.Pages.Users;
 
 public class IndexModel : PageModel
 {
-    private readonly AuthService _auth;
+    private readonly IAuthService _auth;
 
-    public IndexModel(AuthService auth)
+    public IndexModel(IAuthService auth)
     {
         _auth = auth;
     }
