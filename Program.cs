@@ -1,5 +1,6 @@
 using ManuTrackAPI.Data;
 using ManuTrackAPI.Services;
+using ManuTrackAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,9 +11,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         .GetConnectionString("DefaultConnection")));
 
 // Services
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<ProductService>();
-builder.Services.AddScoped<WorkOrderService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IWorkOrderService, WorkOrderService>();
 
 // Session
 builder.Services.AddSession(options =>

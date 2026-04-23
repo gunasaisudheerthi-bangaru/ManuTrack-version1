@@ -6,10 +6,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ManuTrackAPI.Services.Interfaces;
 
 namespace ManuTrackAPI.Services;
 
-public class AuthService(AppDbContext db, IConfiguration config)
+public class AuthService(AppDbContext db, IConfiguration config) : IAuthService
 {
     //if admin already exists 
     public async Task<bool> AdminExistsAsync() =>
@@ -88,7 +89,6 @@ public class AuthService(AppDbContext db, IConfiguration config)
         db.Users.Add(user);
         await db.SaveChangesAsync();
 
-        // Use actorId (Admin's ID) for audit
         await WriteAuditAsync(actorId, "UserCreated", $"NewUserID:{user.UserID} Role:{user.Role}");
         return (MapToResponse(user), null);
     }

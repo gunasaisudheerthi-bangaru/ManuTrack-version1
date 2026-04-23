@@ -2,10 +2,11 @@
 using ManuTrackAPI.Models;
 using ManuTrackAPI.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
+using ManuTrackAPI.Services.Interfaces;
 
 namespace ManuTrackAPI.Services;
 
-public class WorkOrderService(AppDbContext db, AuthService auth)
+public class WorkOrderService(AppDbContext db, IAuthService auth) : IWorkOrderService
 {
     // ── WORK ORDER ─────────────────────────────────────────────
 

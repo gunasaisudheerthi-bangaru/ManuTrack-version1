@@ -2,14 +2,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ManuTrackAPI.Services;
 using ManuTrackAPI.Models.DTOs;
+using ManuTrackAPI.Services.Interfaces;
 
 namespace ManuTrackAPI.Pages.Products;
 
 public class IndexModel : PageModel
 {
-    private readonly ProductService _products;
+    private readonly IProductService _products;
 
-    public IndexModel(ProductService products)
+    public IndexModel(IProductService products)
     {
         _products = products;
     }
@@ -46,6 +47,13 @@ public class IndexModel : PageModel
     {
         Role = HttpContext.Session.GetString("role") ?? string.Empty;
 
+        if (Role != "Admin")
+        {
+            ErrorMessage = "Only Admin can create products.";
+            Products = await _products.GetAllProductsAsync();
+            return Page();
+        }
+
         var (product, error) = await _products.CreateProductAsync(
             new CreateProductRequest(Name, Category, Version, Status),
             GetActorId());
@@ -64,6 +72,13 @@ public class IndexModel : PageModel
         int ProductID, string Name, string Category, string Version, string Status)
     {
         Role = HttpContext.Session.GetString("role") ?? string.Empty;
+
+        if (Role != "Admin")
+        {
+            ErrorMessage = "Only Admin can update products.";
+            Products = await _products.GetAllProductsAsync();
+            return Page();
+        }
 
         var (product, error) = await _products.UpdateProductAsync(
             ProductID,
@@ -143,12 +158,17 @@ public class IndexModel : PageModel
         var (success, error) = await _products.ObsoleteBOMAsync(bomId, GetActorId());
 
         if (!success)
-            ErrorMessage = error ?? "Could not obsolete BOM.";
-        else
-            SuccessMessage = "BOM entry marked as obsolete.";
+            return new JsonResult(new
+            {
+                success = false,
+                message = error ?? "Could not obsolete BOM."
+            });
 
-        Products = await _products.GetAllProductsAsync();
-        return Page();
+        return new JsonResult(new
+        {
+            success = true,
+            message = "BOM marked as obsolete."
+        });
     }
 
     // ── HELPER ─────────────────────────────────────────────

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ManuTrackAPI.Services;
+using ManuTrackAPI.Services.Interfaces;
 using ManuTrackAPI.Models;
 using ManuTrackAPI.Models.DTOs;
 
@@ -8,9 +9,9 @@ namespace ManuTrackAPI.Pages.Users;
 
 public class IndexModel : PageModel
 {
-    private readonly AuthService _auth;
+    private readonly IAuthService _auth;
 
-    public IndexModel(AuthService auth)
+    public IndexModel(IAuthService auth)
     {
         _auth = auth;
     }
@@ -32,8 +33,8 @@ public class IndexModel : PageModel
     }
 
     public async Task<IActionResult> OnPostCreateAsync(
-     string Name, string Email, string Phone,
-     string Role, string Password)
+        string Name, string Email, string Phone,
+        string Role, string Password)
     {
         // Validate Name
         if (string.IsNullOrWhiteSpace(Name))
@@ -128,7 +129,7 @@ public class IndexModel : PageModel
             user.Name,
             user.Role,
             user.Phone,
-            true   // ← IsActive = true
+            true
         ), GetActorId());
 
         SuccessMessage = $"User {user.Name} activated successfully!";
@@ -141,11 +142,12 @@ public class IndexModel : PageModel
         var token = HttpContext.Session.GetString("token");
         if (token == null) return 0;
 
-        var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+        var handler = new System.IdentityModel.Tokens.Jwt
+            .JwtSecurityTokenHandler();
         var jwt = handler.ReadJwtToken(token);
         var id = jwt.Claims.FirstOrDefault(c =>
-            c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
-            ?.Value;
+            c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/" +
+            "claims/nameidentifier")?.Value;
         return int.TryParse(id, out var result) ? result : 0;
     }
 }

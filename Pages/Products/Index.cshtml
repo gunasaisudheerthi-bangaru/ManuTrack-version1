@@ -3,6 +3,8 @@
 
 <h4 class="fw-bold mb-4">Products & BOM Management</h4>
 
+@Html.AntiForgeryToken()
+
 @if (!string.IsNullOrEmpty(Model.SuccessMessage))
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -20,7 +22,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="mb-0">Products</h5>
-    @if (Model.Role == "Admin" || Model.Role == "Planner")
+    @if (Model.Role == "Admin")
     {
         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createProductModal">
             + Add Product
@@ -74,7 +76,7 @@
                         </td>
                         <td class="text-muted small">@p.CreatedAt.ToString("dd MMM yyyy")</td>
                         <td>
-                            @if (Model.Role == "Admin" || Model.Role == "Planner")
+                            @if (Model.Role == "Admin" )
                             {
                                 <button class="btn btn-outline-secondary btn-sm me-1"
                                         onclick="openEditProduct(@p.ProductID, '@p.Name', '@p.Category', '@p.Version', '@p.Status')">
@@ -349,7 +351,7 @@
 
             tbody.innerHTML = data.map(b => `
                 <tr>
-                    <td class="text-muted small">#${b.bomID}</td>
+                    <td class="text-muted small">#${b.bomid}</td>
                     <td class="fw-semibold">${b.componentName}</td>
                     <td>${b.unit}</td>
                     <td>${b.quantity}</td>
@@ -361,12 +363,12 @@
                     </td>
                     <td>
                         <button class="btn btn-outline-secondary btn-sm me-1"
-                            onclick="openEditBOM(${b.bomID}, '${b.componentName}', '${b.unit}', ${b.quantity}, '${b.version}', '${b.status}')">
+                            onclick="openEditBOM(${b.bomid}, '${b.componentName}', '${b.unit}', ${b.quantity}, '${b.version}', '${b.status}')">
                             Edit
                         </button>
                         ${b.status === 'Active' ? `
                         <button class="btn btn-outline-warning btn-sm"
-                            onclick="obsoleteBOM(${b.bomID})">
+                            onclick="obsoleteBOM(${b.bomid})">
                             Obsolete
                         </button>` : ''}
                     </td>
@@ -386,15 +388,21 @@
         const token = document.querySelector('input[name="__RequestVerificationToken"]');
         if (token) formData.append('__RequestVerificationToken', token.value);
 
-        const res = await fetch(`/Products?handler=ObsoleteBOM`, {
-            method: 'POST',
-            body: formData
-        });
+        try {
+            const res = await fetch(`/Products?handler=ObsoleteBOM`, {
+                method: 'POST',
+                body: formData
+            });
 
-        if (res.ok) {
-            loadBOM(currentProductId);
-        } else {
-            alert('Failed to obsolete BOM entry.');
+            const data = await res.json();
+
+            if (data.success) {
+                loadBOM(currentProductId);
+            } else {
+                alert(data.message || 'Failed to obsolete BOM entry.');
+            }
+        } catch (e) {
+            alert('Something went wrong. Please try again.');
         }
     }
 

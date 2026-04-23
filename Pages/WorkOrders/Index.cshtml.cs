@@ -1,18 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ManuTrackAPI.Services;
+using ManuTrackAPI.Services.Interfaces;
 using ManuTrackAPI.Models.DTOs;
 
 namespace ManuTrackAPI.Pages.WorkOrders;
 
 public class IndexModel : PageModel
 {
-    private readonly WorkOrderService _workOrders;
-    private readonly ProductService _products;
-    private readonly AuthService _auth;
+    private readonly IWorkOrderService _workOrders;
+    private readonly IProductService _products;
+    private readonly IAuthService _auth;
 
-    public IndexModel(WorkOrderService workOrders,
-        ProductService products, AuthService auth)
+    public IndexModel(IWorkOrderService workOrders,
+        IProductService products, IAuthService auth)
     {
         _workOrders = workOrders;
         _products = products;

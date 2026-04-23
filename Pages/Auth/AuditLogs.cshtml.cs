@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ManuTrackAPI.Services;
+using ManuTrackAPI.Services.Interfaces;
 using ManuTrackAPI.Models;
 using ManuTrackAPI.Models.DTOs;
 
@@ -8,9 +9,9 @@ namespace ManuTrackAPI.Pages.Auth;
 
 public class AuditLogsModel : PageModel
 {
-    private readonly AuthService _auth;
+    private readonly IAuthService _auth;
 
-    public AuditLogsModel(AuthService auth)
+    public AuditLogsModel(IAuthService auth)
     {
         _auth = auth;
     }

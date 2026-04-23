@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ManuTrackAPI.Services;
+using ManuTrackAPI.Services.Interfaces;
 using ManuTrackAPI.Models.DTOs;
 using System.Text.RegularExpressions;
 
@@ -8,9 +9,9 @@ namespace ManuTrackAPI.Pages.Auth;
 
 public class LoginModel : PageModel
 {
-    private readonly AuthService _auth;
+    private readonly IAuthService _auth;
 
-    public LoginModel(AuthService auth)
+    public LoginModel(IAuthService auth)
     {
         _auth = auth;
     }
