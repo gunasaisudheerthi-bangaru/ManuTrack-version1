@@ -1,15 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ManuTrackAPI.Services;
+using ManuTrackAPI.Services.Interfaces;
 using ManuTrackAPI.Models.DTOs;
 
 namespace ManuTrackAPI.Pages.Auth;
 
 public class RegisterModel : PageModel
 {
-    private readonly AuthService _auth;
+    private readonly IAuthService _auth;
 
-    public RegisterModel(AuthService auth)
+    public RegisterModel(IAuthService auth)
     {
         _auth = auth;
     }
@@ -29,11 +30,17 @@ public class RegisterModel : PageModel
     public string ErrorMessage { get; set; } = string.Empty;
     public string SuccessMessage { get; set; } = string.Empty;
 
-    public IActionResult OnGet()
+    public async Task<IActionResult> OnGet()
     {
         // If already logged in go to dashboard
         if (HttpContext.Session.GetString("token") != null)
             return RedirectToPage("/Dashboard/Index");
+
+        if (await _auth.AdminExistsAsync())
+            return RedirectToPage("/Auth/Login",
+                new { message = "Admin already exists. Only one Admin is allowed. Please login with Admin credentials." });
+
+
         return Page();
     }
 

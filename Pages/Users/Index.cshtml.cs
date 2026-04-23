@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ManuTrackAPI.Services;
+using ManuTrackAPI.Services.Interfaces;
 using ManuTrackAPI.Models;
 using ManuTrackAPI.Models.DTOs;
 
@@ -8,9 +9,9 @@ namespace ManuTrackAPI.Pages.Users;
 
 public class IndexModel : PageModel
 {
-    private readonly AuthService _auth;
+    private readonly IAuthService _auth;
 
-    public IndexModel(AuthService auth)
+    public IndexModel(IAuthService auth)
     {
         _auth = auth;
     }
@@ -35,6 +36,64 @@ public class IndexModel : PageModel
         string Name, string Email, string Phone,
         string Role, string Password)
     {
+        // Validate Name
+        if (string.IsNullOrWhiteSpace(Name))
+        {
+            ErrorMessage = "Name is required.";
+            Users = await _auth.GetAllUsersAsync();
+            return Page();
+        }
+
+        // Validate Email
+        if (string.IsNullOrWhiteSpace(Email))
+        {
+            ErrorMessage = "Email is required.";
+            Users = await _auth.GetAllUsersAsync();
+            return Page();
+        }
+
+        var emailRegex = new System.Text.RegularExpressions
+            .Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+        if (!emailRegex.IsMatch(Email))
+        {
+            ErrorMessage = "Please enter a valid email address.";
+            Users = await _auth.GetAllUsersAsync();
+            return Page();
+        }
+
+        // Validate Phone
+        if (string.IsNullOrWhiteSpace(Phone))
+        {
+            ErrorMessage = "Phone number is required.";
+            Users = await _auth.GetAllUsersAsync();
+            return Page();
+        }
+
+        var phoneRegex = new System.Text.RegularExpressions
+            .Regex(@"^[0-9]{10}$");
+        if (!phoneRegex.IsMatch(Phone))
+        {
+            ErrorMessage = "Phone number must be exactly 10 digits.";
+            Users = await _auth.GetAllUsersAsync();
+            return Page();
+        }
+
+        // Validate Password
+        if (string.IsNullOrWhiteSpace(Password))
+        {
+            ErrorMessage = "Password is required.";
+            Users = await _auth.GetAllUsersAsync();
+            return Page();
+        }
+
+        if (Password.Length < 6)
+        {
+            ErrorMessage = "Password must be at least 6 characters.";
+            Users = await _auth.GetAllUsersAsync();
+            return Page();
+        }
+
+        // All validation passed → create user
         var (user, error) = await _auth.CreateUserAsync(
             new CreateUserRequest(Name, Role, Email, Phone, Password),
             GetActorId());
@@ -70,7 +129,7 @@ public class IndexModel : PageModel
             user.Name,
             user.Role,
             user.Phone,
-            true   // ← IsActive = true
+            true
         ), GetActorId());
 
         SuccessMessage = $"User {user.Name} activated successfully!";
@@ -83,11 +142,12 @@ public class IndexModel : PageModel
         var token = HttpContext.Session.GetString("token");
         if (token == null) return 0;
 
-        var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+        var handler = new System.IdentityModel.Tokens.Jwt
+            .JwtSecurityTokenHandler();
         var jwt = handler.ReadJwtToken(token);
         var id = jwt.Claims.FirstOrDefault(c =>
-            c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
-            ?.Value;
+            c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/" +
+            "claims/nameidentifier")?.Value;
         return int.TryParse(id, out var result) ? result : 0;
     }
 }
