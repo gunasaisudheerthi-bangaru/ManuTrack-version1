@@ -24,6 +24,7 @@ public interface IAuthService
     Task<(bool success, string? error)> ChangePasswordAsync(
         int userId, ChangePasswordRequest req);
 
+    Task<(bool success, string? error)> UpdateProfileAsync(int userId, UpdateProfileRequest req);
     Task<bool> DeactivateUserAsync(int id, int actorId);
 
     Task<List<AuditLog>> GetAuditLogsAsync(int? userId = null);
