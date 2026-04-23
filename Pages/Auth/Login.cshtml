@@ -28,40 +28,84 @@
 
                     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
                     {
-                        <div class="alert alert-danger small">
-                            @Model.ErrorMessage
-                        </div>
-                    }
+                    <div class="alert alert-danger small">
+                     ⚠ @Model.ErrorMessage
+                    </div>
+                        }
+
+@if (!string.IsNullOrEmpty(Model.InfoMessage))
+{
+    <div class="alert alert-warning small">
+        ⚠ @Model.InfoMessage
+    </div>
+}
 
                     <form method="post">
+
+                        <!-- Email -->
                         <div class="mb-3">
                             <label class="form-label fw-bold small">Email</label>
-                            <input asp-for="Email"
-                                   class="form-control"
-                                   placeholder="Enter your email" />
+                            @if (!string.IsNullOrEmpty(Model.EmailError))
+                            {
+                                <input asp-for="Email"
+                                       class="form-control is-invalid"
+                                       placeholder="Enter your email" />
+                                <div class="invalid-feedback">
+                                    @Model.EmailError
+                                </div>
+                            }
+                            else
+                            {
+                                <input asp-for="Email"
+                                       class="form-control"
+                                       placeholder="Enter your email" />
+                            }
                         </div>
+
+                        <!-- Password -->
                         <div class="mb-4">
                             <label class="form-label fw-bold small">Password</label>
-                            <input asp-for="Password"
-                                   type="password"
-                                   class="form-control"
-                                   placeholder="Enter your password" />
+                            @if (!string.IsNullOrEmpty(Model.PasswordError))
+                            {
+                                <input asp-for="Password"
+                                       type="password"
+                                       class="form-control is-invalid"
+                                       placeholder="Enter your password" />
+                                <div class="invalid-feedback">
+                                    @Model.PasswordError
+                                </div>
+                            }
+                            else
+                            {
+                                <input asp-for="Password"
+                                       type="password"
+                                       class="form-control"
+                                       placeholder="Enter your password" />
+                            }
+                            <div class="form-text text-muted">
+                                Minimum 6 characters
+                            </div>
                         </div>
+
                         <button type="submit"
                                 class="btn btn-primary w-100 fw-bold">
                             Login
                         </button>
+
                     </form>
 
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
                     <p class="text-center text-muted mt-3 small">
-                        Contact Admin to get your credentials
+                    Contact Admin to get your credentials
                     </p>
+                    }
 
                     <hr />
-                     <p class="text-center small">
-                     First time? 
-                     <a href="/Auth/Register">Register as Admin</a>
-                     </p>
+                    <p class="text-center small">
+                        First time?
+                        <a href="/Auth/Register">Register as Admin</a>
+                    </p>
 
                 </div>
             </div>

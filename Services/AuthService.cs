@@ -11,6 +11,9 @@ namespace ManuTrackAPI.Services;
 
 public class AuthService(AppDbContext db, IConfiguration config)
 {
+    //if admin already exists 
+    public async Task<bool> AdminExistsAsync() =>
+    await db.Users.AnyAsync(u => u.Role == "Admin");
     // ── REGISTER (first time, no actor) ───────────────────────
     public async Task<(UserResponse? user, string? error)> RegisterAsync(CreateUserRequest req)
     {
@@ -43,6 +46,8 @@ public class AuthService(AppDbContext db, IConfiguration config)
         await WriteAuditAsync(user.UserID, "UserRegistered", $"Role:{user.Role}");
         return (MapToResponse(user), null);
     }
+
+
 
     // ── LOGIN ──────────────────────────────────────────────────
     public async Task<LoginResponse?> LoginAsync(LoginRequest req)

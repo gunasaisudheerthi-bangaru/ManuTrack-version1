@@ -32,9 +32,67 @@ public class IndexModel : PageModel
     }
 
     public async Task<IActionResult> OnPostCreateAsync(
-        string Name, string Email, string Phone,
-        string Role, string Password)
+     string Name, string Email, string Phone,
+     string Role, string Password)
     {
+        // Validate Name
+        if (string.IsNullOrWhiteSpace(Name))
+        {
+            ErrorMessage = "Name is required.";
+            Users = await _auth.GetAllUsersAsync();
+            return Page();
+        }
+
+        // Validate Email
+        if (string.IsNullOrWhiteSpace(Email))
+        {
+            ErrorMessage = "Email is required.";
+            Users = await _auth.GetAllUsersAsync();
+            return Page();
+        }
+
+        var emailRegex = new System.Text.RegularExpressions
+            .Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+        if (!emailRegex.IsMatch(Email))
+        {
+            ErrorMessage = "Please enter a valid email address.";
+            Users = await _auth.GetAllUsersAsync();
+            return Page();
+        }
+
+        // Validate Phone
+        if (string.IsNullOrWhiteSpace(Phone))
+        {
+            ErrorMessage = "Phone number is required.";
+            Users = await _auth.GetAllUsersAsync();
+            return Page();
+        }
+
+        var phoneRegex = new System.Text.RegularExpressions
+            .Regex(@"^[0-9]{10}$");
+        if (!phoneRegex.IsMatch(Phone))
+        {
+            ErrorMessage = "Phone number must be exactly 10 digits.";
+            Users = await _auth.GetAllUsersAsync();
+            return Page();
+        }
+
+        // Validate Password
+        if (string.IsNullOrWhiteSpace(Password))
+        {
+            ErrorMessage = "Password is required.";
+            Users = await _auth.GetAllUsersAsync();
+            return Page();
+        }
+
+        if (Password.Length < 6)
+        {
+            ErrorMessage = "Password must be at least 6 characters.";
+            Users = await _auth.GetAllUsersAsync();
+            return Page();
+        }
+
+        // All validation passed → create user
         var (user, error) = await _auth.CreateUserAsync(
             new CreateUserRequest(Name, Role, Email, Phone, Password),
             GetActorId());
