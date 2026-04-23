@@ -6,6 +6,8 @@
     <title>ManuTrack</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
           rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+          rel="stylesheet" />
     <style>
         .navbar-brand { font-weight: bold; font-size: 1.4rem; }
         .badge-admin { background-color: #6f42c1; }
@@ -16,6 +18,7 @@
         .badge-compliance { background-color: #dc3545; }
         .sidebar { min-height: calc(100vh - 56px); background: #f8f9fa; }
         .nav-link.active { background-color: #e9ecef; border-radius: 6px; }
+        .nav-link:hover { background-color: #e9ecef; border-radius: 6px; }
     </style>
 </head>
 <body>
@@ -45,9 +48,10 @@
             <!-- Sidebar -->
             <div class="col-md-2 sidebar py-3 px-3">
                 <ul class="nav flex-column gap-1">
+
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="/Dashboard/Index">
-                            Dashboard
+                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
                         </a>
                     </li>
 
@@ -55,40 +59,47 @@
                     {
                         <li class="nav-item">
                             <a class="nav-link text-dark" href="/Users/Index">
-                                Users
+                                <i class="bi bi-people me-2"></i>Users
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" href="/Auth/AuditLogs">
-                                Audit Logs
+                                <i class="bi bi-journal-text me-2"></i>Audit Logs
                             </a>
                         </li>
                     }
 
-                        @if (Context.Session.GetString("role") == "ComplianceOfficer")
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" href="/Auth/AuditLogs">
-                                    Audit Logs
-                                </a>
-                            </li>
-                        }
+                    @if (Context.Session.GetString("role") == "ComplianceOfficer")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="/Auth/AuditLogs">
+                                <i class="bi bi-journal-text me-2"></i>Audit Logs
+                            </a>
+                        </li>
+                    }
 
                     @if (Context.Session.GetString("role") == "Admin" ||
                          Context.Session.GetString("role") == "Planner")
                     {
                         <li class="nav-item">
                             <a class="nav-link text-dark" href="/Products/Index">
-                                Products & BOM
+                                <i class="bi bi-box-seam me-2"></i>Products & BOM
                             </a>
                         </li>
                     }
 
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="/WorkOrders/Index">
-                            Work Orders
+                            <i class="bi bi-clipboard2-check me-2"></i>Work Orders
                         </a>
                     </li>
+
+                    <li class="nav-item mt-2 border-top pt-2">
+                        <a class="nav-link text-dark" href="/Profile/Index">
+                            <i class="bi bi-person-circle me-2"></i>My Profile
+                        </a>
+                    </li>
+
                 </ul>
             </div>
 

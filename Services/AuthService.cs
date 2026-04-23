@@ -58,7 +58,7 @@ public class AuthService(AppDbContext db, IConfiguration config)
         }
 
         await WriteAuditAsync(user.UserID, "Login");
-        return new LoginResponse(GenerateToken(user), user.Role, user.Name);
+        return new LoginResponse(GenerateToken(user), user.Role, user.Name, user.UserID);
     }
 
     // ── CREATE USER (Admin creates other actors) ───────────────
@@ -128,6 +128,19 @@ public class AuthService(AppDbContext db, IConfiguration config)
         await WriteAuditAsync(userId, "PasswordChanged");
         return (true, null);
     }
+
+    // ── UPDATE PROFILE (user updates own phone) ────────────────
+    public async Task<(bool success, string? error)> UpdateProfileAsync(int userId, UpdateProfileRequest req)
+    {
+        var user = await db.Users.FindAsync(userId);
+        if (user == null) return (false, "User not found.");
+
+        user.Phone = req.Phone;
+        await db.SaveChangesAsync();
+        await WriteAuditAsync(userId, "ProfileUpdated", $"UserID:{userId}");
+        return (true, null);
+    }
+
 
     // ── DEACTIVATE USER ────────────────────────────────────────
     public async Task<bool> DeactivateUserAsync(int id, int actorId)

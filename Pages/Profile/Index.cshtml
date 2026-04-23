@@ -1,0 +1,235 @@
+﻿@page
+@model ManuTrackAPI.Pages.Profile.IndexModel
+@{
+    ViewData["Title"] = "My Profile";
+
+    var roleDescriptions = new Dictionary<string, string>
+    {
+        ["Admin"] = "Configures products, users and system settings.",
+        ["Planner"] = "Creates and manages production schedules and work orders.",
+        ["Operator"] = "Executes work orders, updates progress and reports issues.",
+        ["Inspector"] = "Records inspection results and manages non-conformance reports.",
+        ["InventoryManager"] = "Oversees raw material and finished goods stock.",
+        ["ComplianceOfficer"] = "Reviews audit logs and generates regulatory reports."
+    };
+
+    var roleBadgeColors = new Dictionary<string, string>
+    {
+        ["Admin"] = "bg-danger",
+        ["Planner"] = "bg-primary",
+        ["Operator"] = "bg-success",
+        ["Inspector"] = "bg-warning text-dark",
+        ["InventoryManager"] = "bg-info text-dark",
+        ["ComplianceOfficer"] = "bg-secondary"
+    };
+
+    var userRole = Model.CurrentUser?.Role ?? "";
+    var badgeClass = roleBadgeColors.TryGetValue(userRole, out var bc) ? bc : "bg-secondary";
+    var roleDesc = roleDescriptions.TryGetValue(userRole, out var rd) ? rd : "";
+}
+
+<div class="container-fluid py-4 px-4">
+
+    <div class="mb-4">
+        <h4 class="fw-bold mb-0">My Profile</h4>
+        <p class="text-muted small mb-0">View and manage your account details</p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@Model.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@Model.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+
+        <!-- LEFT COLUMN -->
+        <div class="col-lg-4">
+
+            <!-- Identity Card -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body text-center py-4">
+                    <div class="mx-auto rounded-circle d-flex align-items-center
+                        justify-content-center text-white fw-bold mb-3"
+                         style="width:80px;height:80px;font-size:2rem;
+                        background:linear-gradient(135deg,#0d6efd,#6610f2);">
+                        @(Model.CurrentUser?.Name.Substring(0, 1).ToUpper())
+                    </div>
+                    <h5 class="fw-bold mb-1">@Model.CurrentUser?.Name</h5>
+                    <span class="badge @badgeClass px-3 py-1 mb-2">@userRole</span>
+                    <p class="text-muted small mb-0">@roleDesc</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-4">
+                        <span class="text-muted small">
+                            <i class="bi bi-envelope me-2"></i>Email
+                        </span>
+                        <span class="small fw-semibold">@Model.CurrentUser?.Email</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-4">
+                        <span class="text-muted small">
+                            <i class="bi bi-telephone me-2"></i>Phone
+                        </span>
+                        <span class="small fw-semibold">
+                            @(string.IsNullOrEmpty(Model.CurrentUser?.Phone) ? "—" : Model.CurrentUser.Phone)
+                        </span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-4">
+                        <span class="text-muted small">
+                            <i class="bi bi-shield-check me-2"></i>Status
+                        </span>
+                        @if (Model.CurrentUser?.IsActive == true)
+                        {
+                            <span class="badge bg-success px-3">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger px-3">Inactive</span>
+                        }
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-4">
+                        <span class="text-muted small">
+                            <i class="bi bi-calendar3 me-2"></i>Member Since
+                        </span>
+                        <span class="small fw-semibold">
+                            @Model.CurrentUser?.CreatedAt.ToString("dd MMM yyyy")
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-clock-history me-2 text-primary"></i>Recent Activity
+                </div>
+                <ul class="list-group list-group-flush">
+                    @if (!Model.RecentActivity.Any())
+                    {
+                        <li class="list-group-item text-muted small px-4 py-3">
+                            No activity recorded yet.
+                        </li>
+                    }
+                    @foreach (var log in Model.RecentActivity)
+                    {
+                        <li class="list-group-item px-4 py-3">
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="bi bi-dot fs-3 text-primary mt-n1"></i>
+                                <div>
+                                    <div class="small fw-semibold">@log.Action</div>
+                                    <div class="text-muted" style="font-size:0.75rem;">
+                                        @log.Timestamp.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="col-lg-8">
+
+            <!-- Contact Information -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-person-lines-fill me-2 text-primary"></i>Contact Information
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted small mb-4">
+                        Your name, email and role are managed by your Admin.
+                        You can update your phone number below.
+                    </p>
+                    <form method="post" asp-page-handler="UpdatePhone">
+                        @Html.AntiForgeryToken()
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-semibold">Full Name</label>
+                                <input type="text" class="form-control bg-light border-0"
+                                       value="@Model.CurrentUser?.Name" disabled />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-semibold">Email Address</label>
+                                <input type="email" class="form-control bg-light border-0"
+                                       value="@Model.CurrentUser?.Email" disabled />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-semibold">Role</label>
+                                <input type="text" class="form-control bg-light border-0"
+                                       value="@userRole" disabled />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-semibold">
+                                    Phone Number
+                                </label>
+                                <input type="tel" name="Phone" value="@Model.Phone"
+                                       class="form-control"
+                                       placeholder="e.g. +91 98765 43210" />
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-save me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Change Password -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-lock-fill me-2 text-warning"></i>Change Password
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted small mb-4">
+                        Choose a strong password of at least 6 characters.
+                    </p>
+                    <form method="post" asp-page-handler="ChangePassword">
+                        @Html.AntiForgeryToken()
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label text-muted small fw-semibold">
+                                    Current Password
+                                </label>
+                                <input type="password" name="CurrentPassword"
+                                       class="form-control" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-semibold">
+                                    New Password
+                                </label>
+                                <input type="password" name="NewPassword"
+                                       class="form-control" required minlength="6" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-semibold">
+                                    Confirm New Password
+                                </label>
+                                <input type="password" name="ConfirmPassword"
+                                       class="form-control" required minlength="6" />
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-warning px-4">
+                                <i class="bi bi-key me-2"></i>Change Password
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
