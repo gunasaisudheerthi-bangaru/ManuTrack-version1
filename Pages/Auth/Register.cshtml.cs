@@ -32,14 +32,11 @@ public class RegisterModel : PageModel
 
     public async Task<IActionResult> OnGet()
     {
-        // If already logged in go to dashboard
         if (HttpContext.Session.GetString("token") != null)
             return RedirectToPage("/Dashboard/Index");
 
         if (await _auth.AdminExistsAsync())
-            return RedirectToPage("/Auth/Login",
-                new { message = "Admin already exists. Only one Admin is allowed. Please login with Admin credentials." });
-
+            ErrorMessage = "Admin account already exists. Registration is closed. Please sign in with your Admin credentials.";
 
         return Page();
     }

@@ -1,62 +1,485 @@
 @page
 @model ManuTrackAPI.Pages.Dashboard.IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
 
-<h4 class="fw-bold mb-4">Dashboard</h4>
+<div class="mb-4">
+    <h4 class="fw-bold mb-0">Welcome back, @Model.Name 👋</h4>
+    <p class="text-muted small mb-0">Here's what's happening in ManuTrack today.</p>
+</div>
 
-<div class="row g-4">
-
-    @if (Model.Role == "Admin")
-    {
-        <div class="col-md-4">
-            <a href="/Users/Index" class="text-decoration-none">
-                <div class="card shadow-sm border-start border-primary border-4">
-                    <div class="card-body">
-                        <h5 class="fw-bold">Users</h5>
-                        <p class="text-muted small mb-0">
-                            Manage system users and roles
-                        </p>
-                        <p class="text-primary mt-2 mb-0 small fw-bold">
-                            Manage →
-                        </p>
+@* ── ADMIN ───────────────────────────────────────────────── *@
+@if (Model.Role == "Admin")
+{
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-primary bg-opacity-10 p-3">
+                        <i class="bi bi-people fs-4 text-primary"></i>
+                    </div>
+                    <div>
+                        <div class="fs-3 fw-bold">@Model.TotalUsers</div>
+                        <div class="text-muted small">Total Users</div>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
-    }
-
-    @if (Model.Role == "Admin" || Model.Role == "Planner")
-    {
-        <div class="col-md-4">
-            <a href="/Products/Index" class="text-decoration-none">
-                <div class="card shadow-sm border-start border-success border-4">
-                    <div class="card-body">
-                        <h5 class="fw-bold">Products & BOM</h5>
-                        <p class="text-muted small mb-0">
-                            Manage products and bill of materials
-                        </p>
-                        <p class="text-success mt-2 mb-0 small fw-bold">
-                            Manage →
-                        </p>
+        <div class="col-md-3 col-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-success bg-opacity-10 p-3">
+                        <i class="bi bi-box-seam fs-4 text-success"></i>
+                    </div>
+                    <div>
+                        <div class="fs-3 fw-bold">@Model.TotalProducts</div>
+                        <div class="text-muted small">
+                            Products
+                            <span class="badge bg-success ms-1">@Model.ActiveProducts Active</span>
+                            <span class="badge bg-secondary ms-1">@Model.DraftProducts Draft</span>
+                        </div>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
-    }
+        <div class="col-md-3 col-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-warning bg-opacity-10 p-3">
+                        <i class="bi bi-clipboard2-check fs-4 text-warning"></i>
+                    </div>
+                    <div>
+                        <div class="fs-3 fw-bold">@Model.TotalWorkOrders</div>
+                        <div class="text-muted small">Work Orders</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-info bg-opacity-10 p-3">
+                        <i class="bi bi-graph-up fs-4 text-info"></i>
+                    </div>
+                    <div>
+                        <div class="fs-3 fw-bold">@Model.WOCompletedAdmin</div>
+                        <div class="text-muted small">Completed WOs</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <div class="col-md-4">
-        <a href="/WorkOrders/Index" class="text-decoration-none">
-            <div class="card shadow-sm border-start border-warning border-4">
+    <!-- Work Order Status + Quick Actions -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-bar-chart me-2 text-primary"></i>
+                    Production Status
+                </div>
                 <div class="card-body">
-                    <h5 class="fw-bold">Work Orders</h5>
+                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="small">Pending</span>
+                        <span class="badge bg-secondary px-3">@Model.WOPendingAdmin</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                        <span class="small">In Progress</span>
+                        <span class="badge bg-primary px-3">@Model.WOInProgressAdmin</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center py-2">
+                        <span class="small">Completed</span>
+                        <span class="badge bg-success px-3">@Model.WOCompletedAdmin</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-lightning me-2 text-warning"></i>
+                    Quick Actions
+                </div>
+                <div class="card-body d-flex flex-column gap-2">
+                    <a href="/Users/Index" class="text-decoration-none">
+                        <div class="d-flex align-items-center gap-3 p-2 rounded hover-bg">
+                            <i class="bi bi-person-plus text-primary fs-5"></i>
+                            <div>
+                                <div class="small fw-semibold">Manage Users</div>
+                                <div class="text-muted" style="font-size:0.75rem">
+                                    Create, edit and deactivate system users
+                                </div>
+                            </div>
+                            <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+                        </div>
+                    </a>
+                    <a href="/Products/Index" class="text-decoration-none">
+                        <div class="d-flex align-items-center gap-3 p-2 rounded">
+                            <i class="bi bi-box-seam text-success fs-5"></i>
+                            <div>
+                                <div class="small fw-semibold">Products & BOM</div>
+                                <div class="text-muted" style="font-size:0.75rem">
+                                    Register products and manage bill of materials
+                                </div>
+                            </div>
+                            <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+                        </div>
+                    </a>
+                    <a href="/Auth/AuditLogs" class="text-decoration-none">
+                        <div class="d-flex align-items-center gap-3 p-2 rounded">
+                            <i class="bi bi-journal-text text-warning fs-5"></i>
+                            <div>
+                                <div class="small fw-semibold">Audit Logs</div>
+                                <div class="text-muted" style="font-size:0.75rem">
+                                    Review all system activity and events
+                                </div>
+                            </div>
+                            <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-semibold">
+            <i class="bi bi-clock-history me-2 text-primary"></i>Recent System Activity
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="small">User</th>
+                        <th class="small">Action</th>
+                        <th class="small">Details</th>
+                        <th class="small">Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in Model.RecentAuditLogs)
+                    {
+                        <tr>
+                            <td class="small fw-semibold">@(log.User?.Name ?? "System")</td>
+                            <td>
+                                <span class="badge bg-secondary">@log.Action</span>
+                            </td>
+                            <td class="small text-muted">@(log.Details ?? "—")</td>
+                            <td class="small text-muted">
+                                @log.Timestamp.ToLocalTime().ToString("dd MMM, hh:mm tt")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@* ── PLANNER ─────────────────────────────────────────────── *@
+else if (Model.Role == "Planner")
+{
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-2 col-6">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="fs-3 fw-bold text-secondary">@Model.WOPending</div>
+                <div class="small text-muted">Pending</div>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="fs-3 fw-bold text-primary">@Model.WOInProgress</div>
+                <div class="small text-muted">In Progress</div>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="fs-3 fw-bold text-success">@Model.WOCompleted</div>
+                <div class="small text-muted">Completed</div>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="fs-3 fw-bold text-muted">@Model.WOCancelled</div>
+                <div class="small text-muted">Cancelled</div>
+            </div>
+        </div>
+        <div class="col-md-2 col-6">
+            <div class="card border-0 shadow-sm text-center py-3
+                @(Model.WOOverdue > 0 ? "border border-danger" : "")">
+                <div class="fs-3 fw-bold text-danger">@Model.WOOverdue</div>
+                <div class="small text-muted">Overdue</div>
+            </div>
+        </div>
+       
+    </div>
+
+    <!-- Warnings + Quick Actions -->
+    <div class="row g-3 mb-4">
+        @if (Model.ProductsNoBOM.Any())
+        {
+            <div class="col-md-5">
+                <div class="card border-0 shadow-sm border-start border-4 border-warning h-100">
+                    <div class="card-header bg-white fw-semibold">
+                        <i class="bi bi-exclamation-triangle me-2 text-warning"></i>
+                        Products Missing Active BOM
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        @foreach (var p in Model.ProductsNoBOM)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2">
+                                <span class="small fw-semibold">@p.Name</span>
+                                <span class="badge bg-warning text-dark">No Active BOM</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+        <div class="@(Model.ProductsNoBOM.Any() ? "col-md-7" : "col-12")">
+            <div class="row g-3 h-100">
+                <div class="col-md-6">
+                    <a href="/WorkOrders/Index" class="text-decoration-none">
+                        <div class="card border-0 shadow-sm h-100 border-start border-4 border-primary">
+                            <div class="card-body d-flex align-items-center gap-3">
+                                <i class="bi bi-clipboard2-check fs-3 text-primary"></i>
+                                <div>
+                                    <div class="fw-semibold">Work Orders</div>
+                                    <div class="text-muted small">
+                                        Create and manage production work orders
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="/Products/Index" class="text-decoration-none">
+                        <div class="card border-0 shadow-sm h-100 border-start border-4 border-success">
+                            <div class="card-body d-flex align-items-center gap-3">
+                                <i class="bi bi-box-seam fs-3 text-success"></i>
+                                <div>
+                                    <div class="fw-semibold">Products & BOM</div>
+                                    <div class="text-muted small">
+                                        View products and manage bill of materials
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Work Orders -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-semibold">
+            <i class="bi bi-list-check me-2 text-primary"></i>Recent Work Orders
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="small">WO#</th>
+                        <th class="small">Product</th>
+                        <th class="small">Qty</th>
+                        <th class="small">End Date</th>
+                        <th class="small">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var wo in Model.RecentWorkOrders)
+                    {
+                        var isOverdue = wo.Status != "Completed" &&
+                                        wo.Status != "Cancelled" &&
+                                        wo.EndDate < DateTime.Now;
+                        <tr>
+                            <td class="small fw-semibold">#@wo.WorkOrderID</td>
+                            <td class="small">@wo.ProductName</td>
+                            <td class="small">@wo.Quantity</td>
+                            <td class="small @(isOverdue ? "text-danger fw-semibold" : "")">
+                                @wo.EndDate.ToString("dd MMM yyyy")
+                                @if (isOverdue)
+                                {
+                                    <span class="badge bg-danger ms-1">Overdue</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge @(wo.Status switch {
+                                    "Pending" => "bg-secondary",
+                                    "InProgress" => "bg-primary",
+                                    "Completed" => "bg-success",
+                                    "Cancelled" => "bg-danger",
+                                    _ => "bg-secondary"
+                                })">@wo.Status</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@* ── OPERATOR ────────────────────────────────────────────── *@
+else if (Model.Role == "Operator")
+{
+    <!-- Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="fs-3 fw-bold text-secondary">@Model.TaskPending</div>
+                <div class="small text-muted">Pending</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="fs-3 fw-bold text-primary">@Model.TaskInProgress</div>
+                <div class="small text-muted">In Progress</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="fs-3 fw-bold text-success">@Model.TaskDone</div>
+                <div class="small text-muted">Done</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="fs-3 fw-bold">
+                    @(Model.TaskPending + Model.TaskInProgress + Model.TaskDone)
+                </div>
+                <div class="small text-muted">Total Assigned</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Link -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-5">
+            <a href="/WorkOrders/Index" class="text-decoration-none">
+                <div class="card border-0 shadow-sm border-start border-4 border-success">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <i class="bi bi-tools fs-3 text-success"></i>
+                        <div>
+                            <div class="fw-semibold">My Work Orders</div>
+                            <div class="text-muted small">
+                                View and update your assigned tasks
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- My Tasks -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-semibold">
+            <i class="bi bi-person-check me-2 text-success"></i>My Assigned Tasks
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="small">Task</th>
+                        <th class="small">Work Order</th>
+                        <th class="small">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.MyTasks.Any())
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center text-muted py-3 small">
+                                No tasks assigned yet.
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var task in Model.MyTasks)
+                    {
+                        <tr>
+                            <td class="small">@task.Description</td>
+                            <td class="small text-muted">WO #@task.WorkOrderID</td>
+                            <td>
+                                <span class="badge @(task.Status switch {
+                                    "Pending" => "bg-secondary",
+                                    "InProgress" => "bg-primary",
+                                    "Done" => "bg-success",
+                                    _ => "bg-secondary"
+                                })">@task.Status</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@* ── OTHER ROLES ─────────────────────────────────────────── *@
+else
+{
+    <div class="row g-3">
+        <div class="col-md-6">
+            <a href="/WorkOrders/Index" class="text-decoration-none">
+                <div class="card border-0 shadow-sm border-start border-4 border-primary">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <i class="bi bi-clipboard2-check fs-3 text-primary"></i>
+                        <div>
+                            <div class="fw-semibold">Work Orders</div>
+                            <div class="text-muted small">
+                                View active production work orders and their status
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        @if (Model.Role == "ComplianceOfficer")
+        {
+            <div class="col-md-6">
+                <a href="/Auth/AuditLogs" class="text-decoration-none">
+                    <div class="card border-0 shadow-sm border-start border-4 border-warning">
+                        <div class="card-body d-flex align-items-center gap-3">
+                            <i class="bi bi-journal-text fs-3 text-warning"></i>
+                            <div>
+                                <div class="fw-semibold">Audit Logs</div>
+                                <div class="text-muted small">
+                                    Review system activity and compliance records
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+        <div class="col-12 mt-2">
+            <div class="card border-0 shadow-sm bg-light">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-hourglass-split fs-1 text-muted d-block mb-2"></i>
+                    <h6 class="fw-semibold">More features coming soon</h6>
                     <p class="text-muted small mb-0">
-                        Track production and tasks
-                    </p>
-                    <p class="text-warning mt-2 mb-0 small fw-bold">
-                        Manage →
+                        @if (Model.Role == "Inspector")
+                        {
+                            <span>Inspection scheduling, defect logging and quality reports will be available here.</span>
+                        }
+                        else if (Model.Role == "InventoryManager")
+                        {
+                            <span>Raw material tracking, stock levels and purchase order management will be available here.</span>
+                        }
+                        else
+                        {
+                            <span>Additional modules for your role are currently under development.</span>
+                        }
                     </p>
                 </div>
             </div>
-        </a>
+        </div>
     </div>
-
-</div>
+}
